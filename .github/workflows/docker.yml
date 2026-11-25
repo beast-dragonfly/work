@@ -23,7 +23,8 @@ jobs:
         run: |
           container=$(docker run --detach -p 127.0.0.1:8000:8000 work-sentiment)
           trap 'docker logs "$container"; docker rm --force "$container" >/dev/null' EXIT
-          curl --silent --show-error --fail --retry 15 --retry-delay 1 --retry-connrefused \
+          curl --silent --show-error --fail --retry 15 --retry-all-errors --retry-delay 1 \
+            --max-time 5 --retry-max-time 25 \
             --output /dev/null http://127.0.0.1:8000/
           curl --silent --show-error --fail \
             --data-urlencode 'review=Размер подошёл, но ткань тоньше, чем ожидала. В целом нормально.' \
