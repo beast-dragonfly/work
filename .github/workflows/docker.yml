@@ -1,0 +1,31 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Build image
+        run: docker build -t work-sentiment .
+
+      - name: Check web prediction
+        run: |
+          container=$(docker run --detach -p 127.0.0.1:8000:8000 work-sentiment)
+          trap 'docker logs "$container"; docker rm --force "$container" >/dev/null' EXIT
+          curl --silent --show-error --fail --retry 15 --retry-delay 1 --retry-connrefused \
+            --output /dev/null http://127.0.0.1:8000/
+          curl --silent --show-error --fail \
+            --data-urlencode 'review=Размер подошёл, но ткань тоньше, чем ожидала. В целом нормально.' \
+            --output response.html http://127.0.0.1:8000/
+          grep --fixed-strings 'id="prediction" role="status">Нейтральный</p>' response.html

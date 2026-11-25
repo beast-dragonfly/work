@@ -1,0 +1,10 @@
+**
+!requirements.txt
+!sentiment/
+!sentiment/**
+sentiment/**/__pycache__/
+!models/
+!models/sentiment.joblib
+!reports/
+!reports/metrics.json
+!README.md

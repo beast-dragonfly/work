@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Тональность отзывов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="{{ url_for('static', filename='form.js') }}"></script>
+</head>
+<body>
+    <main class="workspace">
+        <header class="heading">
+            <h1>Тональность отзывов</h1>
+            <p>Проверьте, как модель оценит русскоязычный отзыв о товаре, услуге или компании.</p>
+        </header>
+
+        <div class="panels">
+            <form class="review-form" method="post" action="{{ url_for('index') }}">
+                <label for="review">Текст отзыва</label>
+                <textarea id="review" name="review" placeholder="Вставьте или напишите отзыв…" required
+                          aria-describedby="review-length{% if error %} review-error{% endif %}"
+                          {% if error %}aria-invalid="true"{% endif %}>{{ review }}</textarea>
+                <p class="review-length" id="review-length" data-max-length="{{ max_length }}">До 5 000 символов</p>
+
+                {% if error %}
+                <p class="error" id="review-error" role="alert">{{ error }}</p>
+                {% endif %}
+
+                <div class="form-actions">
+                    <button class="submit" type="submit">Проверить отзыв</button>
+                    <button class="example" type="button" id="example" hidden>Вставить пример</button>
+                </div>
+            </form>
+
+            <section class="result{% if label %} result--{{ label }}{% endif %}" aria-labelledby="result-heading">
+                <h2 id="result-heading">Тональность по версии модели</h2>
+                {% if label %}
+                <p class="result-label" id="prediction" role="status">{{ label_name | capitalize }}</p>
+                {% else %}
+                <p class="result-empty">Здесь появится результат проверки.</p>
+                {% endif %}
+            </section>
+        </div>
+
+        <p class="dataset-note">Модель обучена на отзывах об одежде и аксессуарах из RuReviews.</p>
+    </main>
+</body>
+</html>
