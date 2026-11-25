@@ -19,3 +19,8 @@ example.addEventListener("click", () => {
 
 example.hidden = false;
 updateLength();
+
+const prediction = document.querySelector("#prediction");
+if (prediction && prediction.getBoundingClientRect().bottom > window.innerHeight) {
+    prediction.scrollIntoView({ block: "nearest" });
+}
